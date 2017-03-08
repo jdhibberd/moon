@@ -1,0 +1,17 @@
+{% import htmlutil %}
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>处理问题</title>
+    <link rel="stylesheet" href="{{ static_url("main.css") }}">
+  </head>
+  <body>
+    <div class="left-panel">
+      {% module Nav() %}
+    </div>
+    <div class="right-panel">
+      {% block body %}{% end %}
+    </div>
+  </body>
+</html>

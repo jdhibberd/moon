@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block body %}
+  {% if state["tasks"] %}
+
+    {# TODO: refer to these as notes and comments #}
+
+    <ul class="task">
+    {% for task in state["tasks"] %}
+      <li>
+        {{ task["message"] }}
+        {% if "task" in task %}
+          {% raw htmlutil.get_task_link(task["task"]) %}
+        {% end %}
+        &nbsp;-
+        {% raw htmlutil.get_compose_link("Edit", note_id=task["note_id"]) %}&nbsp;-
+        {% raw htmlutil.get_compose_link("Comment", parent_id=task["note_id"]) %}
+        {% if state["comments"][task["note_id"]] %}
+          <ul class="comment">
+          {% for comment in state["comments"][task["note_id"]] %}
+            <li>
+              {{ htmlutil.get_last_modified_string(comment) }}&nbsp;-
+              {{ comment["message"] }}&nbsp;-
+              {% raw htmlutil.get_compose_link("Edit", note_id=comment["note_id"]) %}
+            </li>
+          {% end %}
+          </ul>
+        {% end %}
+      </li>
+    {% end %}
+    </ul>
+  {% end %}
+  {% raw htmlutil.get_compose_link("Add task") %}
+{% end %}

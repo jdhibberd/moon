@@ -1,0 +1,62 @@
+body {
+  padding: 0;
+  margin: 30px;
+  font-family: Helvetica Neue;
+  font-size: 14px;
+}
+
+ul {
+  padding: 0;
+}
+
+li {
+  padding: 0;
+}
+
+textarea {
+  font-family: Helvetica Neue;
+  font-size: 14px;
+  resize: none;
+}
+
+a {
+  color: #2f69c6;
+}
+
+div.left-panel {
+  float: left;
+  width: 12%;
+}
+
+div.right-panel {
+  float: left;
+  width: 88%;
+}
+
+ul.task {
+  list-style-type: none;
+  margin: 0 0 20px 0;
+}
+
+ul.task li {
+  padding: 6px 0;
+}
+
+ul.task ul.comment {
+  list-style-type: square;
+  margin: 6px 0 6px 20px;
+}
+
+ul.nav {
+  list-style-type: none;
+  margin: 0;
+}
+
+ul.nav li {
+  padding: 6px 0;
+}
+
+ul.nav ul {
+  list-style-type: square;
+  margin: 6px 0 6px 20px;
+}

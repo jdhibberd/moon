@@ -1,0 +1,12 @@
+<ul class="nav">
+  <li><a href="/">All</a></li>
+  {% if people %}
+    <li>People
+      <ul>
+        {% for person in sorted(people) %}
+          <li><a href="/people/{{ person }}">{{ person }}</a></li>
+        {% end %}
+      </ul>
+    <li>
+  {% end %}
+</ul>

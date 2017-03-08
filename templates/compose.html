@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block body %}
+  <form name="form" action="/compose" method="post">
+    <textarea
+      name="message"
+      rows="7"
+      cols="80"
+      maxlength="1024"
+      autofocus>{{ text }}</textarea>
+    <input type="hidden" name="tags" value="{{ tags }}">
+    <div>
+      <a href="javascript: submit()">Save</a>&nbsp;-
+      <a href="/">Cancel</a>
+    </div>
+  </form>
+  <script type="text/javascript">
+    function submit() {
+      document.form.submit();
+    }
+  </script>
+{% end %}
