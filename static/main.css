@@ -11,6 +11,7 @@ ul {
 
 li {
   padding: 0;
+  margin: 10px 0;
 }
 
 textarea {
@@ -33,18 +34,22 @@ div.right-panel {
   width: 88%;
 }
 
+span.primary-note {
+  color: #000;
+}
+
+span.secondary-note {
+  color: #aaa;
+}
+
 ul.task {
   list-style-type: none;
-  margin: 0 0 20px 0;
+  margin: 0;
 }
 
-ul.task li {
-  padding: 6px 0;
-}
-
-ul.task ul.comment {
+ul.task ul {
   list-style-type: square;
-  margin: 6px 0 6px 20px;
+  margin: 0 0 20px 20px;
 }
 
 ul.nav {
@@ -52,11 +57,7 @@ ul.nav {
   margin: 0;
 }
 
-ul.nav li {
-  padding: 6px 0;
-}
-
 ul.nav ul {
   list-style-type: square;
-  margin: 6px 0 6px 20px;
+  margin: 0 0 0 20px;
 }

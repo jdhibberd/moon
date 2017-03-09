@@ -7,9 +7,9 @@ from pymongo import MongoClient
 def get_distinct_tag_values(tag):
     return _get_collection().distinct(tag)
 
-def find_notes(query):
+def read_all_notes():
     notes = []
-    for note in _get_collection().find(query):
+    for note in _get_collection().find():
         notes.append(_decode_objectids(note))
     return notes
 

@@ -1,4 +1,5 @@
 import db
+import notetree
 import os.path
 import tornado.ioloop
 import uimodules
@@ -8,53 +9,19 @@ from parse import parse, to_text
 from tornado.web import Application, RequestHandler
 
 
-class MainHandler(RequestHandler):
+class TaskHandler(RequestHandler):
 
     def get(self):
-        notes = db.find_notes(query={})
-        state = self._get_state(notes)
-        self.render("task.html", state=state)
+        notes = notetree.build()
+        self.render("task.html", notes=notes)
 
-    def _get_state(self, notes):
-
-        tasks = []
-        for note in notes:
-            if "parent_id" not in note:
-                tasks.append(note)
-
-        comments = {task["note_id"]:[] for task in tasks}
-        for note in notes:
-            if "parent_id" in note:
-                comments[note["parent_id"]].append(note)
-
-        return dict(
-            tasks=tasks,
-            comments=comments,
-        )
 
 class PeopleHandler(RequestHandler):
 
-    def get(self, user):
-        notes = db.find_notes(query={"owner": user})
-        state = self._get_state(notes)
-        self.render("task.html", state=state)
+    def get(self, person):
+        notes = notetree.build(("owner", person))
+        self.render("task.html", notes=notes)
 
-    def _get_state(self, notes):
-
-        tasks = []
-        for note in notes:
-            if "parent_id" not in note:
-                tasks.append(note)
-
-        comments = {task["note_id"]:[] for task in tasks}
-        for note in notes:
-            if "parent_id" in note:
-                comments[note["parent_id"]].append(note)
-
-        return dict(
-            tasks=tasks,
-            comments=comments,
-        )
 
 class ComposeHandler(RequestHandler):
 
@@ -81,7 +48,7 @@ class ComposeHandler(RequestHandler):
 
 def make_app():
     handlers = [
-        (r"/", MainHandler),
+        (r"/", TaskHandler),
         (r"/compose", ComposeHandler),
         (r"/people/(.*)", PeopleHandler),
     ]

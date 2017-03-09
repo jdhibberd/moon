@@ -1,26 +1,25 @@
 {% extends "base.html" %}
 {% block body %}
-  {% if state["tasks"] %}
-
-    {# TODO: refer to these as notes and comments #}
-
+  {% if notes %}
     <ul class="task">
-    {% for task in state["tasks"] %}
+    {% for note in notes %}
       <li>
-        {{ task["message"] }}
-        {% if "task" in task %}
-          {% raw htmlutil.get_task_link(task["task"]) %}
+        <span class="{{ note["css_class"] }}">{{ note["message"] }}</span>
+        {% if "task" in note %}
+          {% raw htmlutil.get_task_link(note["task"]) %}
         {% end %}
         &nbsp;-
-        {% raw htmlutil.get_compose_link("Edit", note_id=task["note_id"]) %}&nbsp;-
-        {% raw htmlutil.get_compose_link("Comment", parent_id=task["note_id"]) %}
-        {% if state["comments"][task["note_id"]] %}
-          <ul class="comment">
-          {% for comment in state["comments"][task["note_id"]] %}
+        {% raw htmlutil.get_compose_link("Edit", note_id=note["note_id"]) %}&nbsp;-
+        {% raw htmlutil.get_compose_link("Comment", parent_id=note["note_id"]) %}
+        {% if "children" in note %}
+          <ul>
+          {% for subnote in note["children"] %}
             <li>
-              {{ htmlutil.get_last_modified_string(comment) }}&nbsp;-
-              {{ comment["message"] }}&nbsp;-
-              {% raw htmlutil.get_compose_link("Edit", note_id=comment["note_id"]) %}
+              <span class="{{ subnote["css_class"] }}">
+                {{ htmlutil.get_last_modified_string(subnote) }}&nbsp;-
+                {{ subnote["message"] }}
+              </span>&nbsp;-
+              {% raw htmlutil.get_compose_link("Edit", note_id=subnote["note_id"]) %}
             </li>
           {% end %}
           </ul>
@@ -29,5 +28,4 @@
     {% end %}
     </ul>
   {% end %}
-  {% raw htmlutil.get_compose_link("Add task") %}
 {% end %}

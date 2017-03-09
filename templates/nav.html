@@ -1,4 +1,6 @@
+{% import htmlutil %}
 <ul class="nav">
+  <li>{% raw htmlutil.get_compose_link("&square;") %}</a>
   <li><a href="/">All</a></li>
   {% if people %}
     <li>People

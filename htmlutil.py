@@ -7,7 +7,7 @@ _TASK_URI_TEMPLATE = "https://our.intern.facebook.com/intern/tasks/?t={0}"
 
 
 def get_task_link(task_number):
-    return "&nbsp;<a href=\"{0}\" target=\"_blank\">({1})</a>".format(
+    return "<a href=\"{0}\" target=\"_blank\">({1})</a>".format(
         _TASK_URI_TEMPLATE.format(task_number),
         task_number,
     )
