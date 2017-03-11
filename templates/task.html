@@ -8,22 +8,34 @@
         {% if "task" in note %}
           {% raw htmlutil.get_task_link(note["task"]) %}
         {% end %}
-        &nbsp;-
-        {% raw htmlutil.get_compose_link("Edit", note_id=note["note_id"]) %}&nbsp;-
-        {% raw htmlutil.get_compose_link("Comment", parent_id=note["note_id"]) %}
-        {% if "children" in note %}
-          <ul>
-          {% for subnote in note["children"] %}
+        -
+        {% raw htmlutil.get_compose_link(
+          tags={"note_id": note["note_id"]},
+          content="Edit",
+        ) %}
+        <ul>
+          {% for subnote in note.get("children", []) %}
             <li>
               <span class="{{ subnote["css_class"] }}">
-                {{ htmlutil.get_last_modified_string(subnote) }}&nbsp;-
+                {{ subnote["last_modified_human"] }}
                 {{ subnote["message"] }}
-              </span>&nbsp;-
-              {% raw htmlutil.get_compose_link("Edit", note_id=subnote["note_id"]) %}
+              </span>
+              {% if "task" in subnote %}
+                {% raw htmlutil.get_task_link(subnote["task"]) %}
+              {% end %}
+              -
+              {% raw htmlutil.get_compose_link(
+                tags={"note_id": subnote["note_id"]},
+                content="Edit",
+              ) %}
             </li>
           {% end %}
-          </ul>
-        {% end %}
+          <li>
+            {% raw htmlutil.get_compose_link(
+              tags={"parent_id": note["note_id"]},
+            ) %}
+          </li>
+        </ul>
       </li>
     {% end %}
     </ul>

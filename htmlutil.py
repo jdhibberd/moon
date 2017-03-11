@@ -1,36 +1,57 @@
-import humanize
-import tornado.escape
-import json
+import parse
+import urllib.parse
 
 
 _TASK_URI_TEMPLATE = "https://our.intern.facebook.com/intern/tasks/?t={0}"
+COMPOSE_SYMBOL = "&#9634;"
 
-
-def get_task_link(task_number):
-    return "<a href=\"{0}\" target=\"_blank\">({1})</a>".format(
-        _TASK_URI_TEMPLATE.format(task_number),
-        task_number,
-    )
-
-# TODO: tags k+v should not include ':' or ',' or '?' or '='
-
-def get_compose_link(label, **kwargs):
-    tags = _serialize_tags(kwargs)
-    return "<a href=\"/compose?{0}\">{1}</a>".format(
-        "tags={0}".format(tags) if tags else "",
-        label,
-    )
-
-def _serialize_tags(tags):
-    return ','.join(["{0}:{1}".format(k, v) for k, v in tags.items()])
+def serialize_tags(tags):
+    return ','.join(["{0}{1}{2}".format(k, parse._TAG_DELIMITER, v) for k, v in tags.items()])
 
 def deserialize_tags(tags):
     result = {}
     if tags:
         for pair in tags.split(","):
-            k, v = pair.split(":")
+            k, v = pair.split(parse._TAG_DELIMITER)
             result[k] = v
     return result
 
-def get_last_modified_string(note):
-    return humanize.naturalday(note["last_modified"])
+def get_task_link(task_number):
+    attributes = {
+        "target": "_blank",
+        "href": _TASK_URI_TEMPLATE.format(task_number),
+    }
+    return _get_html_element_string("a", attributes, task_number)
+
+# TODO: tags k+v should not include ':' or ',' or '?' or '='
+# TODO: tag value can't be "null"
+
+def get_compose_link(tags=None, content=COMPOSE_SYMBOL):
+    if tags is None:
+        tags = []
+    tags = serialize_tags(tags)
+    query_string = urllib.parse.urlencode({"tags": tags}) if tags else None
+    attributes = {
+        "class": "compose",
+        "href": "/compose" + ("?" + query_string if query_string else ""),
+    }
+    attributes["class"] = "compose"
+    return _get_html_element_string("a", attributes, content)
+
+class ActiveLinkHighlight(object):
+
+    def __init__(self, current_path):
+        self._current_path = current_path
+
+    def apply(self, path, label):
+        if path == self._current_path:
+            return "<b>{0}</b>".format(label)
+        else:
+            return label
+
+def _get_html_element_string(name, attributes, content):
+    return "<{0}{1}>{2}</{0}>".format(
+        name,
+        ''.join([" {0}=\"{1}\"".format(k, v) for k, v in attributes.items()]),
+        content,
+    )

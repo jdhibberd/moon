@@ -5,7 +5,7 @@ from pymongo import MongoClient
 
 
 def get_distinct_tag_values(tag):
-    return _get_collection().distinct(tag)
+    return sorted(_get_collection().distinct(tag))
 
 def read_all_notes():
     notes = []

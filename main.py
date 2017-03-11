@@ -13,14 +13,33 @@ class TaskHandler(RequestHandler):
 
     def get(self):
         notes = notetree.build()
-        self.render("task.html", notes=notes)
+        self.render(
+            "task.html",
+            compose_tags={},
+            notes=notes,
+        )
 
 
 class PeopleHandler(RequestHandler):
 
     def get(self, person):
-        notes = notetree.build(("owner", person))
-        self.render("task.html", notes=notes)
+        notes = notetree.build(tag=("owner", person), highlight=True)
+        self.render(
+            "task.html",
+            compose_tags={"owner": person},
+            notes=notes,
+        )
+
+
+class ProjectsHandler(RequestHandler):
+
+    def get(self, project):
+        notes = notetree.build(tag=("project", project), highlight=False)
+        self.render(
+            "task.html",
+            compose_tags={"project": project},
+            notes=notes,
+        )
 
 
 class ComposeHandler(RequestHandler):
@@ -34,7 +53,12 @@ class ComposeHandler(RequestHandler):
         else:
             note = db.read_note(note_id)
             text = to_text(note)
-        self.render("compose.html", text=text, tags=tags_argument)
+        self.render(
+            "compose.html",
+            compose_tags={},
+            text=text,
+            tags=tags_argument,
+        )
 
     def post(self):
         # TODO: perhaps rename `message` to `text`
@@ -51,6 +75,7 @@ def make_app():
         (r"/", TaskHandler),
         (r"/compose", ComposeHandler),
         (r"/people/(.*)", PeopleHandler),
+        (r"/projects/(.*)", ProjectsHandler),
     ]
     settings = dict(
         template_path=os.path.join(os.path.dirname(__file__), "templates"),

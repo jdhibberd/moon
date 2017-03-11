@@ -1,7 +1,7 @@
 from bson.objectid import ObjectId
 
 _DEFAULT_VALUE = 1
-_TAG_DELIMITER = ":"
+_TAG_DELIMITER = "."
 _TEXT_DELIMITER = "//"
 
 
@@ -34,5 +34,5 @@ def to_text(note):
             string_buffer.append(" {0}".format(k))
             value = note[k]
             if value is not None:
-                string_buffer.append(":{0}".format(value))
+                string_buffer.append("{0}{1}".format(_TAG_DELIMITER, value))
     return ''.join(string_buffer)

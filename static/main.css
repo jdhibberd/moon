@@ -24,6 +24,10 @@ a {
   color: #2f69c6;
 }
 
+a.compose {
+  text-decoration: none;
+}
+
 div.left-panel {
   float: left;
   width: 12%;
@@ -49,7 +53,7 @@ ul.task {
 
 ul.task ul {
   list-style-type: square;
-  margin: 0 0 20px 20px;
+  margin: 0 0 0 20px;
 }
 
 ul.nav {

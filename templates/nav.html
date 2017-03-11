@@ -1,12 +1,24 @@
 {% import htmlutil %}
+{% set highlight = htmlutil.ActiveLinkHighlight(request.path) %}
 <ul class="nav">
-  <li>{% raw htmlutil.get_compose_link("&square;") %}</a>
-  <li><a href="/">All</a></li>
+  <li>{% raw htmlutil.get_compose_link(tags=compose_tags) %}</li>
+  <li><a href="/">{% raw highlight.apply("/", "All") %}</a></li>
   {% if people %}
     <li>People
       <ul>
-        {% for person in sorted(people) %}
-          <li><a href="/people/{{ person }}">{{ person }}</a></li>
+        {% for person in people %}
+          {% set path = "/people/" + person %}
+          <li><a href="{{ path }}">{% raw highlight.apply(path, person) %}</a></li>
+        {% end %}
+      </ul>
+    <li>
+  {% end %}
+  {% if projects %}
+    <li>Projects
+      <ul>
+        {% for project in projects %}
+          {% set path = "/projects/" + project %}
+          <li><a href="{{ path }}">{% raw highlight.apply(path, project) %}</a></li>
         {% end %}
       </ul>
     <li>
