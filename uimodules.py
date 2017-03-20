@@ -13,3 +13,9 @@ class Nav(tornado.web.UIModule):
             people=people,
             projects=projects,
         )
+
+
+class Note(tornado.web.UIModule):
+
+    def render(self, note):
+        return self.render_string("note.html", note=note)

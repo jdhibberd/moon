@@ -1,12 +1,15 @@
 import parse
 import urllib.parse
 
+from config import config
 
-_TASK_URI_TEMPLATE = "https://our.intern.facebook.com/intern/tasks/?t={0}"
+
 COMPOSE_SYMBOL = "&#9634;"
+
 
 def serialize_tags(tags):
     return ','.join(["{0}{1}{2}".format(k, parse._TAG_DELIMITER, v) for k, v in tags.items()])
+
 
 def deserialize_tags(tags):
     result = {}
@@ -16,15 +19,19 @@ def deserialize_tags(tags):
             result[k] = v
     return result
 
+
 def get_task_link(task_number):
+    uri_template = config["Enterprise"]["TaskURITemplate"]
     attributes = {
         "target": "_blank",
-        "href": _TASK_URI_TEMPLATE.format(task_number),
+        "href": uri_template.format(task_number),
     }
     return _get_html_element_string("a", attributes, task_number)
 
+
 # TODO: tags k+v should not include ':' or ',' or '?' or '='
 # TODO: tag value can't be "null"
+
 
 def get_compose_link(tags=None, content=COMPOSE_SYMBOL):
     if tags is None:
@@ -38,6 +45,7 @@ def get_compose_link(tags=None, content=COMPOSE_SYMBOL):
     attributes["class"] = "compose"
     return _get_html_element_string("a", attributes, content)
 
+
 class ActiveLinkHighlight(object):
 
     def __init__(self, current_path):
@@ -48,6 +56,7 @@ class ActiveLinkHighlight(object):
             return "<b>{0}</b>".format(label)
         else:
             return label
+
 
 def _get_html_element_string(name, attributes, content):
     return "<{0}{1}>{2}</{0}>".format(

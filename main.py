@@ -1,12 +1,14 @@
 import db
 import notetree
+import noteweek
 import os.path
 import tornado.ioloop
 import uimodules
 
+from datetime import datetime
 from htmlutil import deserialize_tags
 from parse import parse, to_text
-from tornado.web import Application, RequestHandler
+from tornado.web import Application, HTTPError, RequestHandler
 
 
 class TaskHandler(RequestHandler):
@@ -39,6 +41,21 @@ class ProjectsHandler(RequestHandler):
             "task.html",
             compose_tags={"project": project},
             notes=notes,
+        )
+
+
+class TimeHandler(RequestHandler):
+
+    def get(self, start_date):
+        try:
+            start_date = datetime.strptime(start_date, "%Y-%m-%d")
+        except ValueError:
+            raise HTTPError(400, 'Invalid date.')
+        notes_by_date = noteweek.build(start_date)
+        self.render(
+            "week.html",
+            compose_tags={},
+            notes_by_date=notes_by_date,
         )
 
 
@@ -76,6 +93,7 @@ def make_app():
         (r"/compose", ComposeHandler),
         (r"/people/(.*)", PeopleHandler),
         (r"/projects/(.*)", ProjectsHandler),
+        (r"/time/(.*)", TimeHandler),
     ]
     settings = dict(
         template_path=os.path.join(os.path.dirname(__file__), "templates"),
@@ -84,6 +102,7 @@ def make_app():
         debug=True,
     )
     return Application(handlers, **settings)
+
 
 if __name__ == "__main__":
     app = make_app()

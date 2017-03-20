@@ -3,40 +3,7 @@
   {% if notes %}
     <ul class="task">
     {% for note in notes %}
-      <li>
-        <span class="{{ note["css_class"] }}">{{ note["message"] }}</span>
-        {% if "task" in note %}
-          {% raw htmlutil.get_task_link(note["task"]) %}
-        {% end %}
-        -
-        {% raw htmlutil.get_compose_link(
-          tags={"note_id": note["note_id"]},
-          content="Edit",
-        ) %}
-        <ul>
-          {% for subnote in note.get("children", []) %}
-            <li>
-              <span class="{{ subnote["css_class"] }}">
-                {{ subnote["last_modified_human"] }}
-                {{ subnote["message"] }}
-              </span>
-              {% if "task" in subnote %}
-                {% raw htmlutil.get_task_link(subnote["task"]) %}
-              {% end %}
-              -
-              {% raw htmlutil.get_compose_link(
-                tags={"note_id": subnote["note_id"]},
-                content="Edit",
-              ) %}
-            </li>
-          {% end %}
-          <li>
-            {% raw htmlutil.get_compose_link(
-              tags={"parent_id": note["note_id"]},
-            ) %}
-          </li>
-        </ul>
-      </li>
+      <li>{% module Note(note=note) %}</li>
     {% end %}
     </ul>
   {% end %}
