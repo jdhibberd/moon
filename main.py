@@ -1,5 +1,4 @@
 import db
-import notetree
 import noteweek
 import os.path
 import tornado.ioloop
@@ -7,14 +6,16 @@ import uimodules
 
 from datetime import datetime
 from htmlutil import deserialize_tags
-from parse import parse, to_text
+from notearchive import ArchiveNoteTree
+from notetree import NoteTree
+from parse import deserialize, serialize
 from tornado.web import Application, HTTPError, RequestHandler
 
 
 class TaskHandler(RequestHandler):
 
     def get(self):
-        notes = notetree.build()
+        notes = NoteTree().build()
         self.render(
             "task.html",
             compose_tags={},
@@ -25,7 +26,7 @@ class TaskHandler(RequestHandler):
 class PeopleHandler(RequestHandler):
 
     def get(self, person):
-        notes = notetree.build(tag=("owner", person), highlight=True)
+        notes = NoteTree(tag=("owner", person), highlight=True).build()
         self.render(
             "task.html",
             compose_tags={"owner": person},
@@ -36,7 +37,7 @@ class PeopleHandler(RequestHandler):
 class ProjectsHandler(RequestHandler):
 
     def get(self, project):
-        notes = notetree.build(tag=("project", project), highlight=False)
+        notes = NoteTree(tag=("project", project), highlight=False).build()
         self.render(
             "task.html",
             compose_tags={"project": project},
@@ -72,23 +73,40 @@ class ComposeHandler(RequestHandler):
             text = ''
         else:
             note = db.read_note(note_id)
-            text = to_text(note)
+            text = serialize(note)
         self.render(
             "compose.html",
             compose_tags={},
             text=text,
             tags=tags_argument,
-            referer=self.get_argument("referer", self._DEFAULT_REFERER),
+            referer=self._get_referer(),
         )
+
+    def _get_referer(self):
+        referer = self.get_argument("referer", None)
+        if referer in {self.request.path, None}:
+            referer = self._DEFAULT_REFERER
+        return referer
 
     def post(self):
         # TODO: perhaps rename `message` to `text`
         message = self.get_argument("message")
         tags_argument = self.get_argument("tags")
         tags = deserialize_tags(tags_argument)
-        note = parse(message, tags)
+        note = deserialize(message, tags)
         db.write_note(note)
         self.redirect(self.get_argument("referer"))
+
+
+class ArchiveHandler(RequestHandler):
+
+    def get(self):
+        notes_by_date = ArchiveNoteTree(tag=None, highlight=True).build()
+        self.render(
+            "week.html",
+            compose_tags={},
+            notes_by_date=notes_by_date,
+        )
 
 
 def make_app():
@@ -98,6 +116,7 @@ def make_app():
         (r"/people/(.*)", PeopleHandler),
         (r"/projects/(.*)", ProjectsHandler),
         (r"/time/(.*)", TimeHandler),
+        (r"/archive", ArchiveHandler),
     ]
     settings = dict(
         template_path=os.path.join(os.path.dirname(__file__), "templates"),

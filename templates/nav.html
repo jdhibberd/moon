@@ -3,7 +3,7 @@
 {% set today = datetime.date.today() %}
 {% set week_start = (today - datetime.timedelta(days=today.weekday())).isoformat() %}
 <ul class="nav">
-  <li>{% raw htmlutil.get_compose_link(tags=compose_tags) %}</li>
+  <li>{% raw htmlutil.get_compose_link(tags=compose_tags, referer=request.path) %}</li>
   <li><a href="/">{% raw highlight.apply("/", "All") %}</a></li>
   <li><a href="/time/{{ week_start }}">{% raw highlight.apply("/time/" + week_start, "Week") %}</a></li>
   {% if people %}
@@ -26,4 +26,5 @@
       </ul>
     <li>
   {% end %}
+  <li><a href="/archive">{% raw highlight.apply("/archive", "Archive") %}</a></li>
 </ul>

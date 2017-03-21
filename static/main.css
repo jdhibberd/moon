@@ -1,6 +1,6 @@
 body {
   padding: 0;
-  margin: 30px;
+  margin: 20px 30px;
   font-family: Helvetica Neue;
   font-size: 14px;
 }
@@ -62,6 +62,6 @@ ul.nav {
 }
 
 ul.nav ul {
-  list-style-type: square;
-  margin: 0 0 0 20px;
+  list-style-type: none;
+  margin: 0 0 0 10px;
 }

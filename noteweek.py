@@ -1,6 +1,5 @@
-import notetree
-
 from datetime import datetime, timedelta
+from notetree import NoteTree
 
 
 _WINDOW_DAYS = 7
@@ -17,7 +16,7 @@ def _get_notes_by_date(start_date):
     for date in _get_window_dates(start_date):
         notes_by_date.append((
             date,
-            notetree.build(tag=("date", date), highlight=True),
+            NoteTree(tag=("date", date), highlight=True).build(),
         ))
     return notes_by_date
 

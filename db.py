@@ -9,9 +9,13 @@ def get_distinct_tag_values(tag):
     return sorted(_get_collection().distinct(tag))
 
 
-def read_all_notes():
+def read_all_notes(query_archive):
     notes = []
-    for note in _get_collection().find():
+    if query_archive:
+        query = {}
+    else:
+        query = {"archived": {"$exists": False}}
+    for note in _get_collection().find(query):
         notes.append(_decode_objectids(note))
     return notes
 
