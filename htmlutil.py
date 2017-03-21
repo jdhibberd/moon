@@ -8,6 +8,8 @@ COMPOSE_SYMBOL = "&#9634;"
 
 
 def serialize_tags(tags):
+    if tags is None:
+        return None
     return ','.join(["{0}{1}{2}".format(k, parse._TAG_DELIMITER, v) for k, v in tags.items()])
 
 
@@ -33,11 +35,10 @@ def get_task_link(task_number):
 # TODO: tag value can't be "null"
 
 
-def get_compose_link(tags=None, content=COMPOSE_SYMBOL):
-    if tags is None:
-        tags = []
+def get_compose_link(tags=None, content=COMPOSE_SYMBOL, referer=None):
     tags = serialize_tags(tags)
-    query_string = urllib.parse.urlencode({"tags": tags}) if tags else None
+    args = {"tags": tags, "referer": referer}
+    query_string = urllib.parse.urlencode({k: v for k, v in args.items() if v})
     attributes = {
         "class": "compose",
         "href": "/compose" + ("?" + query_string if query_string else ""),

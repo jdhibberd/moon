@@ -7,6 +7,7 @@
 {% raw htmlutil.get_compose_link(
   tags={"note_id": note["note_id"]},
   content="Edit",
+  referer=request.path,
 ) %}
 <ul>
   {% for subnote in note.get("children", []) %}
@@ -22,12 +23,14 @@
       {% raw htmlutil.get_compose_link(
         tags={"note_id": subnote["note_id"]},
         content="Edit",
+        referer=request.path,
       ) %}
     </li>
   {% end %}
   <li>
     {% raw htmlutil.get_compose_link(
       tags={"parent_id": note["note_id"]},
+      referer=request.path,
     ) %}
   </li>
 </ul>

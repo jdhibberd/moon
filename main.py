@@ -61,7 +61,10 @@ class TimeHandler(RequestHandler):
 
 class ComposeHandler(RequestHandler):
 
+    _DEFAULT_REFERER = "/"
+
     def get(self):
+        # TODO: this should accept None too
         tags_argument = self.get_argument("tags", "")
         tags = deserialize_tags(tags_argument)
         note_id = tags.get("note_id")
@@ -75,6 +78,7 @@ class ComposeHandler(RequestHandler):
             compose_tags={},
             text=text,
             tags=tags_argument,
+            referer=self.get_argument("referer", self._DEFAULT_REFERER),
         )
 
     def post(self):
@@ -84,7 +88,7 @@ class ComposeHandler(RequestHandler):
         tags = deserialize_tags(tags_argument)
         note = parse(message, tags)
         db.write_note(note)
-        self.redirect("/")
+        self.redirect(self.get_argument("referer"))
 
 
 def make_app():
