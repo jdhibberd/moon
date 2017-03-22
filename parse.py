@@ -27,8 +27,10 @@ def serialize(note):
 
 
 def deserialize(text, tags):
+
     note = tags.copy()
     i = text.rfind(_TEXT_DELIMITER)
+
     if i == -1:
         note["message"] = text.rstrip()
     else:
@@ -36,11 +38,16 @@ def deserialize(text, tags):
         attributes = text[i + len(_TEXT_DELIMITER):].lstrip()
         for attribute in attributes.split():
             k, v = _split_attribute(attribute)
-            v_deserialized = _deserialize_tag_value(k, v)
-            note[k] = v_deserialized
+            note[k] = v
+
+    note = _deserialize_tag_values(note)
     if "created" not in note:
         note["created"] = datetime.datetime.utcnow()
     return note
+
+
+def _deserialize_tag_values(note):
+    return {k: _deserialize_tag_value(k, v) for k, v in note.items()}
 
 
 def _split_attribute(attribute):
@@ -80,12 +87,12 @@ def _deserialize_id(v):
 _DESERIALIZE_TAG_MAP = {
     "archived": _deserialize_date,
     "created": _deserialize_date,
-    "node_id": _deserialize_id,
+    "note_id": _deserialize_id,
     "parent_id": _deserialize_id,
 }
 _SERIALIZE_TAG_MAP = {
     "archived": _serialize_date,
     "created": _serialize_date,
-    "node_id": _serialize_id,
+    "note_id": _serialize_id,
     "parent_id": _serialize_id,
 }
