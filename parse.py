@@ -1,15 +1,9 @@
 import datetime
 
+from bson.objectid import ObjectId
+
 
 _DEFAULT_VALUE = 1
-_DESERIALIZE_TAG_MAP = {
-    "archived": lambda v: datetime.datetime.strptime(v, "%Y-%m-%d"),
-    "created": lambda v: datetime.datetime.strptime(v, "%Y-%m-%d"),
-}
-_SERIALIZE_TAG_MAP = {
-    "archived": lambda v: v.date().isoformat(),
-    "created": lambda v: v.date().isoformat(),
-}
 _TAG_DELIMITER = "."
 _TEXT_DELIMITER = "**"
 
@@ -65,3 +59,33 @@ def _serialize_tag_value(k, v):
 def _deserialize_tag_value(k, v):
     f = _DESERIALIZE_TAG_MAP.get(k)
     return f(v) if f else v
+
+
+def _serialize_date(v):
+    return v.date().isoformat()
+
+
+def _deserialize_date(v):
+    return datetime.datetime.strptime(v, "%Y-%m-%d")
+
+
+def _serialize_id(v):
+    return str(v)
+
+
+def _deserialize_id(v):
+    return ObjectId(v)
+
+
+_DESERIALIZE_TAG_MAP = {
+    "archived": _deserialize_date,
+    "created": _deserialize_date,
+    "node_id": _deserialize_id,
+    "parent_id": _deserialize_id,
+}
+_SERIALIZE_TAG_MAP = {
+    "archived": _serialize_date,
+    "created": _serialize_date,
+    "node_id": _serialize_id,
+    "parent_id": _serialize_id,
+}

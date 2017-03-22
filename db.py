@@ -6,7 +6,8 @@ from pymongo import MongoClient
 
 
 def get_distinct_tag_values(tag):
-    return sorted(_get_collection().distinct(tag))
+    query = {"archived": {"$exists": False}}
+    return sorted(_get_collection().distinct(tag, query))
 
 
 def read_all_notes(query_archive):
@@ -16,19 +17,19 @@ def read_all_notes(query_archive):
     else:
         query = {"archived": {"$exists": False}}
     for note in _get_collection().find(query):
-        notes.append(_decode_objectids(note))
+        notes.append(_decode_primary_key(note))
     return notes
 
 
 def read_note(note_id):
     note = _get_collection().find_one({'_id': ObjectId(note_id)})
-    note = _decode_objectids(note)
+    note = _decode_primary_key(note)
     return note
 
 
 def write_note(note):
     note = _update_last_modified(note)
-    note = _encode_objectids(note)
+    note = _encode_primary_key(note)
     _get_collection().save(note)
 
 
@@ -44,22 +45,18 @@ def _get_collection():
     return MongoClient()[db][collection]
 
 
-def _encode_objectids(note):
+def _encode_primary_key(note):
     encoded_note = note.copy()
     if not is_new_note(note):
-        encoded_note["_id"] = ObjectId(note["note_id"])
+        encoded_note["_id"] = note["note_id"]
         del encoded_note["note_id"]
-    if "parent_id" in note:
-        encoded_note["parent_id"] = ObjectId(note["parent_id"])
     return encoded_note
 
 
-def _decode_objectids(note):
+def _decode_primary_key(note):
     decoded_note = note.copy()
-    decoded_note["note_id"] = str(note["_id"])
+    decoded_note["note_id"] = note["_id"]
     del decoded_note["_id"]
-    if "parent_id" in note:
-        decoded_note["parent_id"] = str(note["parent_id"])
     return decoded_note
 
 
