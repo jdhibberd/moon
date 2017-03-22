@@ -3,7 +3,11 @@
   <ul class="task">
   {% for date, notes in notes_by_date %}
     <li>
-      <span>{{ date }}</span>
+      <span>
+        {% if date.date() == datetime.date.today() %}<b>{% end %}
+        {{ htmlutil.format_datetime(date) }}
+        {% if date.date() == datetime.date.today() %}</b>{% end %}
+      </span>
       <ul>
       {% if notes %}
         {% for note in notes %}

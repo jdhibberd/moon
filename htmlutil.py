@@ -65,3 +65,7 @@ def _get_html_element_string(name, attributes, content):
         ''.join([" {0}=\"{1}\"".format(k, v) for k, v in attributes.items()]),
         content,
     )
+
+
+def format_datetime(dt):
+    return dt.strftime("%b-%d")

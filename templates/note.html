@@ -13,7 +13,7 @@
   {% for subnote in note.get("children", []) %}
     <li>
       <span class="{{ subnote["css_class"] }}">
-        {{ subnote["last_modified_human"] }}
+        {{ htmlutil.format_datetime(subnote["created"]) }}
         {{ subnote["message"] }}
       </span>
       {% if "task" in subnote %}

@@ -15,7 +15,6 @@ class NoteTree(object):
         notes_by_id = self._get_notes_by_id(notes)
         self._assign_children_notes(notes, notes_by_id)
         self._sort_children_notes_chronologically(notes)
-        self._add_last_modified_human_attribute_to_children_notes(notes)
         matching_notes = self._get_matching_notes(notes)
         root_notes = self._get_root_notes(matching_notes, notes_by_id)
 
@@ -58,15 +57,9 @@ class NoteTree(object):
             if "children" in note:
                 note["children"] = sorted(
                     note["children"],
-                    key=itemgetter("last_modified"),
+                    key=itemgetter("created"),
                     reverse=True,
                 )
-
-    def _add_last_modified_human_attribute_to_children_notes(self, notes):
-        for note in notes:
-            if "parent_id" in note:
-                last_modified_human = note["last_modified"].strftime("%b-%d")
-                note["last_modified_human"] = last_modified_human
 
     def _get_matching_notes(self, notes):
         if self._tag:

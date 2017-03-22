@@ -1,15 +1,17 @@
-from datetime import datetime
+import datetime
 
 
 _DEFAULT_VALUE = 1
 _DESERIALIZE_TAG_MAP = {
-    "archived": lambda v: datetime.strptime(v, "%Y-%m-%d"),
+    "archived": lambda v: datetime.datetime.strptime(v, "%Y-%m-%d"),
+    "created": lambda v: datetime.datetime.strptime(v, "%Y-%m-%d"),
 }
 _SERIALIZE_TAG_MAP = {
     "archived": lambda v: v.date().isoformat(),
+    "created": lambda v: v.date().isoformat(),
 }
 _TAG_DELIMITER = "."
-_TEXT_DELIMITER = "//"
+_TEXT_DELIMITER = "**"
 
 
 # TODO: there should be a list of system fields
@@ -42,6 +44,8 @@ def deserialize(text, tags):
             k, v = _split_attribute(attribute)
             v_deserialized = _deserialize_tag_value(k, v)
             note[k] = v_deserialized
+    if "created" not in note:
+        note["created"] = datetime.datetime.utcnow()
     return note
 
 

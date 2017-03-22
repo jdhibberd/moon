@@ -30,5 +30,5 @@ def _get_window_dates(start_date):
 
 def _format_dates(notes_by_date):
     def transform(date):
-        return datetime.strptime(date, "%Y-%m-%d").strftime("%b-%d")
+        return datetime.strptime(date, "%Y-%m-%d")
     return [(transform(date), notes) for date, notes in notes_by_date]
