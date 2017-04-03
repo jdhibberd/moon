@@ -66,10 +66,11 @@ class ComposeHandler(RequestHandler):
 
     def get(self):
         # TODO: this should accept None too
-        tags_argument = self.get_argument("tags", "")
-        tags = deserialize_tags(tags_argument)
+        tags_string = self.get_argument("tags", "")
+        tags = deserialize_tags(tags_string)
         note_id = tags.get("note_id")
         if note_id is None:
+            note = None
             text = ''
         else:
             note = db.read_note(note_id)
@@ -78,7 +79,8 @@ class ComposeHandler(RequestHandler):
             "compose.html",
             compose_tags={},
             text=text,
-            tags=tags_argument,
+            tags_string=tags_string,
+            note=note,
             referer=self._get_referer(),
         )
 
@@ -98,7 +100,7 @@ class ComposeHandler(RequestHandler):
         self.redirect(self.get_argument("referer"))
 
 
-class ArchiveHandler(RequestHandler):
+class ArchiveViewHandler(RequestHandler):
 
     def get(self):
         notes_by_date = ArchiveNoteTree(tag=None, highlight=True).build()
@@ -109,6 +111,24 @@ class ArchiveHandler(RequestHandler):
         )
 
 
+class ArchiveActionHandler(RequestHandler):
+
+    def post(self, note_id):
+        note = db.read_note(note_id)
+        note["archived"] = datetime.utcnow()
+        db.write_note(note)
+
+
+class UnarchiveActionHandler(RequestHandler):
+
+    def post(self, note_id):
+        note = db.read_note(note_id)
+        if "archived" not in note:
+            return
+        del note["archived"]
+        db.write_note(note)
+
+
 def make_app():
     handlers = [
         (r"/", TaskHandler),
@@ -116,7 +136,9 @@ def make_app():
         (r"/people/(.*)", PeopleHandler),
         (r"/projects/(.*)", ProjectsHandler),
         (r"/time/(.*)", TimeHandler),
-        (r"/archive", ArchiveHandler),
+        (r"/archive", ArchiveViewHandler),
+        (r"/notes/([0-9a-f]+)/archive", ArchiveActionHandler),
+        (r"/notes/([0-9a-f]+)/unarchive", UnarchiveActionHandler),
     ]
     settings = dict(
         template_path=os.path.join(os.path.dirname(__file__), "templates"),

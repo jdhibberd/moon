@@ -1,4 +1,10 @@
 {% extends "base.html" %}
+{% block scripts %}
+  <script
+    type="text/javascript"
+    src="{{ static_url("compose.js") }}"
+    defer></script>
+{% end %}
 {% block body %}
   <form name="form" action="/compose" method="post">
     <textarea
@@ -7,16 +13,26 @@
       cols="80"
       maxlength="1024"
       autofocus>{{ text }}</textarea>
-    <input type="hidden" name="tags" value="{{ tags }}">
+    <input type="hidden" name="tags" value="{{ tags_string }}">
     <input type="hidden" name="referer" value="{{ referer }}">
     <div>
       <a href="javascript: submit()">Save</a>&nbsp;-
+      {% if note %}
+        {% if "archived" in note %}
+          <a
+            id="unarchive-button"
+            data-note-id="{{ note["note_id"] }}"
+            data-referer="{{ referer }}">
+          </a>&nbsp;-
+        {% else %}
+          <a
+            id="archive-button"
+            data-note-id="{{ note["note_id"] }}"
+            data-referer="{{ referer }}">
+          </a>&nbsp;-
+        {% end %}
+      {% end %}
       <a href="{{ referer }}">Cancel</a>
     </div>
   </form>
-  <script type="text/javascript">
-    function submit() {
-      document.form.submit();
-    }
-  </script>
 {% end %}

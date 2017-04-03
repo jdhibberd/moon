@@ -10,7 +10,7 @@ class ArchiveNoteTree(NoteTree):
         notes_by_date = defaultdict(list)
         for note in super().build():
             archived_date = self._get_most_recent_recursive_archived_date(note)
-            notes_by_date[archived_date].append(note)
+            notes_by_date[archived_date.date()].append(note)
         return notes_by_date.items()
 
     def _get_notes(self):
