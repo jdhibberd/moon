@@ -4,7 +4,9 @@ import os.path
 import tornado.ioloop
 import uimodules
 
+from bson.objectid import ObjectId
 from datetime import datetime
+from filterednotetree import TagFilteredNoteTree
 from htmlutil import deserialize_tags
 from notearchive import ArchiveNoteTree
 from notetree import NoteTree
@@ -15,7 +17,7 @@ from tornado.web import Application, HTTPError, RequestHandler
 class TaskHandler(RequestHandler):
 
     def get(self):
-        notes = NoteTree().build()
+        notes = NoteTree().get_root_notes()
         self.render(
             "task.html",
             compose_tags={},
@@ -26,22 +28,22 @@ class TaskHandler(RequestHandler):
 class PeopleHandler(RequestHandler):
 
     def get(self, person):
-        notes = NoteTree(tag=("owner", person), highlight=True).build()
+        tree = TagFilteredNoteTree(tag=("owner", person), highlight=True)
         self.render(
             "task.html",
             compose_tags={"owner": person},
-            notes=notes,
+            notes=tree.get_root_notes(),
         )
 
 
 class ProjectsHandler(RequestHandler):
 
     def get(self, project):
-        notes = NoteTree(tag=("project", project), highlight=False).build()
+        tree = TagFilteredNoteTree(tag=("project", project), highlight=False)
         self.render(
             "task.html",
             compose_tags={"project": project},
-            notes=notes,
+            notes=tree.get_root_notes(),
         )
 
 
@@ -103,30 +105,46 @@ class ComposeHandler(RequestHandler):
 class ArchiveViewHandler(RequestHandler):
 
     def get(self):
-        notes_by_date = ArchiveNoteTree(tag=None, highlight=True).build()
+        tree = ArchiveNoteTree()
         self.render(
             "week.html",
             compose_tags={},
-            notes_by_date=notes_by_date,
+            notes_by_date=tree.get_notes_by_date(),
         )
 
 
 class ArchiveActionHandler(RequestHandler):
 
     def post(self, note_id):
-        note = db.read_note(note_id)
+        note_id = ObjectId(note_id)
+        note_tree = NoteTree()
+        note = note_tree.get_note(note_id)
+        self._archive(note, note_tree)
+
+    def _archive(self, note, note_tree):
+        for child in note.get("children", []):
+            self._archive(child, note_tree)
+        if "archived" in note:
+            return
         note["archived"] = datetime.utcnow()
-        db.write_note(note)
+        modified_note = NoteTree.remove_generated_columns(note)
+        db.write_note(modified_note)
 
 
 class UnarchiveActionHandler(RequestHandler):
 
     def post(self, note_id):
+        self._unarchive(note_id)
+
+    def _unarchive(self, note_id):
         note = db.read_note(note_id)
-        if "archived" not in note:
-            return
-        del note["archived"]
-        db.write_note(note)
+        if "archived" in note:
+            del note["archived"]
+            modified_note = NoteTree.remove_generated_columns(note)
+            db.write_note(modified_note)
+        parent_id = note.get("parent_id")
+        if parent_id:
+            self._unarchive(parent_id)
 
 
 def make_app():

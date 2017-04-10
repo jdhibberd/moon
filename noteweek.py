@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from notetree import NoteTree
+from filterednotetree import TagFilteredNoteTree
 
 
 _WINDOW_DAYS = 7
@@ -14,9 +14,10 @@ def build(start_date):
 def _get_notes_by_date(start_date):
     notes_by_date = []
     for date in _get_window_dates(start_date):
+        tree = TagFilteredNoteTree(tag=("date", date), highlight=True)
         notes_by_date.append((
             date,
-            NoteTree(tag=("date", date), highlight=True).build(),
+            tree.get_root_notes(),
         ))
     return notes_by_date
 

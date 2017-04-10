@@ -1,23 +1,26 @@
 import db
 
 from collections import defaultdict
-from notetree import NoteTree
+from filterednotetree import FilteredNoteTree
 
 
-class ArchiveNoteTree(NoteTree):
+class ArchiveNoteTree(FilteredNoteTree):
 
-    def build(self):
+    def __init__(self):
+        super().__init__(highlight=True)
+
+    def get_notes_by_date(self):
         notes_by_date = defaultdict(list)
-        for note in super().build():
+        for note in super().get_root_notes():
             archived_date = self._get_most_recent_recursive_archived_date(note)
             notes_by_date[archived_date.date()].append(note)
         return notes_by_date.items()
 
-    def _get_notes(self):
+    def _read_notes(self):
         return db.read_all_notes(query_archive=True)
 
-    def _get_matching_notes(self, notes):
-        return [note for note in notes if "archived" in note]
+    def _get_matching_notes(self):
+        return [note for note in self._notes if "archived" in note]
 
     def _get_most_recent_recursive_archived_date(self, note):
 
