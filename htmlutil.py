@@ -28,7 +28,16 @@ def get_task_link(task_number):
         "target": "_blank",
         "href": uri_template.format(task_number),
     }
-    return _get_html_element_string("a", attributes, task_number)
+    return _get_html_element_string("a", attributes, "t" + task_number)
+
+
+def get_quip_link(quip_id):
+    uri_template = config["Enterprise"]["QuipURITemplate"]
+    attributes = {
+        "target": "_blank",
+        "href": uri_template.format(quip_id),
+    }
+    return _get_html_element_string("a", attributes, "Quip")
 
 
 # TODO: tags k+v should not include ':' or ',' or '?' or '='

@@ -1,9 +1,12 @@
 {% import htmlutil %}
 <span class="{{ note["css_class"] }}">{{ note["message"] }}</span>
 {% if "task" in note %}
-  {% raw htmlutil.get_task_link(note["task"]) %}
+  &bull;&nbsp;{% raw htmlutil.get_task_link(note["task"]) %}
 {% end %}
--
+{% if "quip" in note %}
+  &bull;&nbsp;{% raw htmlutil.get_quip_link(note["quip"]) %}
+{% end %}
+&bull;
 {% raw htmlutil.get_compose_link(
   tags={"note_id": note["note_id"]},
   content="Edit",
@@ -19,7 +22,7 @@
       {% if "task" in subnote %}
         {% raw htmlutil.get_task_link(subnote["task"]) %}
       {% end %}
-      -
+      &bull;
       {% raw htmlutil.get_compose_link(
         tags={"note_id": subnote["note_id"]},
         content="Edit",
