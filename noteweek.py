@@ -5,10 +5,11 @@ from filterednotetree import TagFilteredNoteTree
 _WINDOW_DAYS = 7
 
 
-def build(start_date):
-    notes_by_date = _get_notes_by_date(start_date)
+def build(date):
+    week_start = (date - timedelta(days=date.weekday())).date()
+    notes_by_date = _get_notes_by_date(week_start)
     notes_by_date = _format_dates(notes_by_date)
-    return notes_by_date
+    return week_start, notes_by_date
 
 
 def _get_notes_by_date(start_date):
@@ -25,7 +26,7 @@ def _get_notes_by_date(start_date):
 def _get_window_dates(start_date):
     dates = []
     for i in range(_WINDOW_DAYS):
-        dates.append((start_date.date() + timedelta(days=i)).isoformat())
+        dates.append((start_date + timedelta(days=i)).isoformat())
     return dates
 
 

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block body %}
+  <ul class="task">
+  {% for date, notes in notes_by_date %}
+    <li>
+      <span>{{ htmlutil.format_datetime(date) }}</span>
+      <ul>
+        {% for note in notes %}
+          <li>{% module Note(note=note) %}</li>
+        {% end %}
+      </ul>
+    </li>
+  {% end %}
+  </ul>
+{% end %}

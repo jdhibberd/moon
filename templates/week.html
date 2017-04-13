@@ -1,13 +1,15 @@
 {% extends "base.html" %}
 {% block body %}
+  <div>
+    {% set one_week = datetime.timedelta(days=7) %}
+    {% raw htmlutil.get_week_link("Prev", week_start - one_week) %}&nbsp;&bull;
+    {% raw htmlutil.get_week_link("Today", datetime.date.today()) %}&nbsp;&bull;
+    {% raw htmlutil.get_week_link("Next", week_start + one_week) %}
+  </div>
   <ul class="task">
   {% for date, notes in notes_by_date %}
     <li>
-      <span>
-        {% if date == datetime.date.today() %}<b>{% end %}
-        {{ htmlutil.format_datetime(date) }}
-        {% if date == datetime.date.today() %}</b>{% end %}
-      </span>
+      <span>{% raw htmlutil.format_week_date(date) %}</span>
       <ul>
       {% if notes %}
         {% for note in notes %}

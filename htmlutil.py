@@ -1,4 +1,6 @@
+import datetime
 import parse
+import re
 import urllib.parse
 
 from config import config
@@ -40,6 +42,13 @@ def get_quip_link(quip_id):
     return _get_html_element_string("a", attributes, "Quip")
 
 
+def get_week_link(content, day):
+    week_start = day - datetime.timedelta(days=day.weekday())
+    attributes = {
+        "href": "/time/" + week_start.isoformat(),
+    }
+    return _get_html_element_string("a", attributes, content)
+
 # TODO: tags k+v should not include ':' or ',' or '?' or '='
 # TODO: tag value can't be "null"
 
@@ -61,8 +70,8 @@ class ActiveLinkHighlight(object):
     def __init__(self, current_path):
         self._current_path = current_path
 
-    def apply(self, path, label):
-        if path == self._current_path:
+    def apply(self, path_pattern, label):
+        if re.match(path_pattern, self._current_path):
             return "<b>{0}</b>".format(label)
         else:
             return label
@@ -76,5 +85,12 @@ def _get_html_element_string(name, attributes, content):
     )
 
 
-def format_datetime(dt):
-    return dt.strftime("%b-%d")
+def format_datetime(date):
+    return date.strftime("%b-%d")
+
+
+def format_week_date(date):
+    formatted_date = format_datetime(date) + date.strftime(", %a")
+    if date == datetime.date.today():
+        formatted_date = "<b>{0}</b>".format(formatted_date)
+    return formatted_date

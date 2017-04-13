@@ -49,15 +49,16 @@ class ProjectsHandler(RequestHandler):
 
 class TimeHandler(RequestHandler):
 
-    def get(self, start_date):
+    def get(self, date):
         try:
-            start_date = datetime.strptime(start_date, "%Y-%m-%d")
+            date = datetime.strptime(date, "%Y-%m-%d")
         except ValueError:
             raise HTTPError(400, 'Invalid date.')
-        notes_by_date = noteweek.build(start_date)
+        week_start, notes_by_date = noteweek.build(date)
         self.render(
             "week.html",
             compose_tags={},
+            week_start=week_start,
             notes_by_date=notes_by_date,
         )
 
@@ -107,7 +108,7 @@ class ArchiveViewHandler(RequestHandler):
     def get(self):
         tree = ArchiveNoteTree()
         self.render(
-            "week.html",
+            "archive.html",
             compose_tags={},
             notes_by_date=tree.get_notes_by_date(),
         )
