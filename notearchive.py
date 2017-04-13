@@ -14,7 +14,7 @@ class ArchiveNoteTree(FilteredNoteTree):
         for note in super().get_root_notes():
             archived_date = self._get_most_recent_recursive_archived_date(note)
             notes_by_date[archived_date.date()].append(note)
-        return notes_by_date.items()
+        return sorted(notes_by_date.items(), reverse=True)
 
     def _read_notes(self):
         return db.read_all_notes(query_archive=True)
