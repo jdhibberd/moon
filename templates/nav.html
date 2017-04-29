@@ -9,7 +9,7 @@
       <ul>
         {% for person in people %}
           {% set path = "/people/" + person %}
-          <li><a href="{{ path }}">{% raw highlight.apply(path, person) %}</a></li>
+          <li><a href="{{ path }}">{% raw highlight.apply(path + "$", person) %}</a></li>
         {% end %}
       </ul>
     <li>

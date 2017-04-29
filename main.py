@@ -6,8 +6,13 @@ import uimodules
 
 from bson.objectid import ObjectId
 from datetime import datetime
-from filterednotetree import TagFilteredNoteTree
-from htmlutil import deserialize_tags
+from filterednotetree import PeopleFilteredNoteTree, TagFilteredNoteTree
+from htmlutil import (
+    deserialize_people,
+    deserialize_tags,
+    serialize_people,
+    serialize_tags,
+)
 from notearchive import ArchiveNoteTree
 from notetree import NoteTree
 from parse import deserialize, serialize
@@ -28,10 +33,10 @@ class TaskHandler(RequestHandler):
 class PeopleHandler(RequestHandler):
 
     def get(self, person):
-        tree = TagFilteredNoteTree(tag=("owner", person), highlight=True)
+        tree = PeopleFilteredNoteTree(person)
         self.render(
             "task.html",
-            compose_tags={"owner": person},
+            compose_tags={"people": person},
             notes=tree.get_root_notes(),
         )
 
@@ -68,20 +73,28 @@ class ComposeHandler(RequestHandler):
     _DEFAULT_REFERER = "/"
 
     def get(self):
+
         # TODO: this should accept None too
         tags_string = self.get_argument("tags", "")
         tags = deserialize_tags(tags_string)
+        people = tags.pop("people", '')
+        tags_string = serialize_tags(tags)
+
         note_id = tags.get("note_id")
         if note_id is None:
             note = None
             text = ''
+            people = people
         else:
             note = db.read_note(note_id)
+            people = serialize_people(note.pop("people"))
             text = serialize(note)
+
         self.render(
             "compose.html",
             compose_tags={},
             text=text,
+            people=people,
             tags_string=tags_string,
             note=note,
             referer=self._get_referer(),
@@ -96,9 +109,9 @@ class ComposeHandler(RequestHandler):
     def post(self):
         # TODO: perhaps rename `message` to `text`
         message = self.get_argument("message")
-        tags_argument = self.get_argument("tags")
-        tags = deserialize_tags(tags_argument)
-        note = deserialize(message, tags)
+        tags = deserialize_tags(self.get_argument("tags"))
+        people = deserialize_people(self.get_argument("people"))
+        note = deserialize(message, tags, people)
         db.write_note(note)
         self.redirect(self.get_argument("referer"))
 

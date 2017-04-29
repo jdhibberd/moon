@@ -26,7 +26,7 @@ def serialize(note):
     return ''.join(string_buffer)
 
 
-def deserialize(text, tags):
+def deserialize(text, tags, people):
 
     note = tags.copy()
     i = text.rfind(_TEXT_DELIMITER)
@@ -43,6 +43,7 @@ def deserialize(text, tags):
     note = _deserialize_tag_values(note)
     if "created" not in note:
         note["created"] = datetime.datetime.utcnow()
+    note["people"] = people
     return note
 
 

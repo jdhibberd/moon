@@ -24,6 +24,19 @@ def deserialize_tags(tags):
     return result
 
 
+
+def serialize_people(people):
+    return ','.join(people)
+
+
+def deserialize_people(people):
+    people = people.strip()
+    if people:
+        return people.split(",")
+    else:
+        return []
+
+
 def get_task_link(task_number):
     uri_template = config["Enterprise"]["TaskURITemplate"]
     attributes = {

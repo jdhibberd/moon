@@ -14,10 +14,20 @@ li {
   margin: 10px 0;
 }
 
-textarea {
+form textarea {
   font-family: Helvetica Neue;
   font-size: 14px;
   resize: none;
+}
+
+form input {
+  font-family: Helvetica Neue;
+  font-size: 14px;
+  width: 500px;
+}
+
+form div.field-value {
+  margin-bottom: 10px;
 }
 
 a {

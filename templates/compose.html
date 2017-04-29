@@ -7,12 +7,19 @@
 {% end %}
 {% block body %}
   <form name="form" action="/compose" method="post">
-    <textarea
-      name="message"
-      rows="7"
-      cols="80"
-      maxlength="1024"
-      autofocus>{{ text }}</textarea>
+    <div class="field-name">Text:</div>
+    <div class="field-value">
+      <textarea
+        name="message"
+        rows="7"
+        cols="80"
+        maxlength="1024"
+        autofocus>{{ text }}</textarea>
+    </div>
+    <div class="field-name">People:</div>
+    <div class="field-value">
+      <input type="text" name="people" value="{{ people }}">
+    </div>
     <input type="hidden" name="tags" value="{{ tags_string }}">
     <input type="hidden" name="referer" value="{{ referer }}">
     <div>

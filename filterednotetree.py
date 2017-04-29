@@ -25,3 +25,13 @@ class TagFilteredNoteTree(FilteredNoteTree):
 
     def _get_matching_notes(self):
         return [note for note in self._notes if self._tag in note.items()]
+
+
+class PeopleFilteredNoteTree(FilteredNoteTree):
+
+    def __init__(self, person):
+        self._person = person
+        super().__init__(highlight=True)
+
+    def _get_matching_notes(self):
+        return [note for note in self._notes if self._person in note["people"]]

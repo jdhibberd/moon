@@ -5,7 +5,7 @@ import tornado.web
 class Nav(tornado.web.UIModule):
 
     def render(self, compose_tags):
-        people = db.get_distinct_tag_values("owner")
+        people = db.get_distinct_tag_values("people")
         projects = db.get_distinct_tag_values("project")
         return self.render_string(
             "nav.html",
