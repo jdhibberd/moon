@@ -20,10 +20,17 @@ form textarea {
   resize: none;
 }
 
-form input {
+form input[type="text"] {
   font-family: Helvetica Neue;
   font-size: 14px;
+}
+
+form input[type="text"].size-long {
   width: 500px;
+}
+
+form input[type="text"].size-medium {
+  width: 250px;
 }
 
 form div.field-value {

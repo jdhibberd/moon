@@ -7,6 +7,7 @@
 {% end %}
 {% block body %}
   <form name="form" action="/compose" method="post">
+
     <div class="field-name">Text:</div>
     <div class="field-value">
       <textarea
@@ -16,10 +17,22 @@
         maxlength="1024"
         autofocus>{{ text }}</textarea>
     </div>
+
     <div class="field-name">People:</div>
     <div class="field-value">
-      <input type="text" name="people" value="{{ people }}">
+      <input type="text" class="size-long" name="people" value="{{ people }}">
     </div>
+
+    <div class="field-name">Task:</div>
+    <div class="field-value">
+      <input type="text" class="size-medium" name="task" value="{{ task }}">
+    </div>
+
+    <div class="field-name">Quip:</div>
+    <div class="field-value">
+      <input type="text" class="size-medium" name="quip" value="{{ quip }}">
+    </div>
+
     <input type="hidden" name="tags" value="{{ tags_string }}">
     <input type="hidden" name="referer" value="{{ referer }}">
     <div>

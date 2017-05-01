@@ -85,9 +85,13 @@ class ComposeHandler(RequestHandler):
             note = None
             text = ''
             people = people
+            task = ''
+            quip = ''
         else:
             note = db.read_note(note_id)
             people = serialize_people(note.pop("people"))
+            task = note.pop("task", "")
+            quip = note.pop("quip", "")
             text = serialize(note)
 
         self.render(
@@ -95,6 +99,8 @@ class ComposeHandler(RequestHandler):
             compose_tags={},
             text=text,
             people=people,
+            task=task,
+            quip=quip,
             tags_string=tags_string,
             note=note,
             referer=self._get_referer(),
@@ -109,7 +115,13 @@ class ComposeHandler(RequestHandler):
     def post(self):
         # TODO: perhaps rename `message` to `text`
         message = self.get_argument("message")
+        task = self.get_argument("task")
+        quip = self.get_argument("quip")
         tags = deserialize_tags(self.get_argument("tags"))
+        if task:
+            tags["task"] = task
+        if quip:
+            tags["quip"] = quip
         people = deserialize_people(self.get_argument("people"))
         note = deserialize(message, tags, people)
         db.write_note(note)
