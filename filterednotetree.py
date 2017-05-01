@@ -1,6 +1,9 @@
 from notetree import NoteTree
 
 
+NONE_STRING = "none"
+
+
 class FilteredNoteTree(NoteTree):
 
     def __init__(self, highlight=False):
@@ -24,7 +27,15 @@ class TagFilteredNoteTree(FilteredNoteTree):
         super().__init__(highlight)
 
     def _get_matching_notes(self):
-        return [note for note in self._notes if self._tag in note.items()]
+        tag_key, tag_value = self._tag
+        if tag_value == NONE_STRING:
+            return [
+                note for note in self._notes if tag_key not in note
+            ]
+        else:
+            return [
+                note for note in self._notes if self._tag in note.items()
+            ]
 
 
 class PeopleFilteredNoteTree(FilteredNoteTree):
@@ -34,4 +45,11 @@ class PeopleFilteredNoteTree(FilteredNoteTree):
         super().__init__(highlight=True)
 
     def _get_matching_notes(self):
-        return [note for note in self._notes if self._person in note["people"]]
+        if self._person == NONE_STRING:
+            return [
+                note for note in self._notes if not note["people"]
+            ]
+        else:
+            return [
+                note for note in self._notes if self._person in note["people"]
+            ]

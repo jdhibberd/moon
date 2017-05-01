@@ -4,22 +4,42 @@
   <li>{% raw htmlutil.get_compose_link(tags=compose_tags, referer=request.path) %}</li>
   <li><a href="/">{% raw highlight.apply("/$", "All") %}</a></li>
   <li>{% raw htmlutil.get_week_link(highlight.apply("/time/", "Week"), datetime.date.today()) %}</li>
-  {% if people %}
+  {% if people_counts or people_none_count %}
     <li>People
       <ul>
-        {% for person in people %}
+        {% for person, count in people_counts %}
           {% set path = "/people/" + person %}
-          <li><a href="{{ path }}">{% raw highlight.apply(path + "$", person) %}</a></li>
+          <li>
+            <a href="{{ path }}">{% raw highlight.apply(path + "$", person) %}</a>
+            <span class="secondary-note">({{ count }})</span>
+          </li>
+        {% end %}
+        {% if people_none_count %}
+          <li>
+            {% set path = "/people/" + none_string %}
+            <a href="{{ path }}">{% raw highlight.apply(path + "$", "<i>" + none_string + "</i>") %}</a>
+            <span class="secondary-note">({{ people_none_count }})</span>
+          </li>
         {% end %}
       </ul>
     <li>
   {% end %}
-  {% if projects %}
+  {% if project_counts or project_none_count %}
     <li>Projects
       <ul>
-        {% for project in projects %}
+        {% for project, count in project_counts %}
           {% set path = "/projects/" + project %}
-          <li><a href="{{ path }}">{% raw highlight.apply(path, project) %}</a></li>
+          <li>
+            <a href="{{ path }}">{% raw highlight.apply(path, project) %}</a>
+            <span class="secondary-note">({{ count }})</span>
+          </li>
+        {% end %}
+        {% if project_none_count %}
+          <li>
+            {% set path = "/projects/" + none_string %}
+            <a href="{{ path }}">{% raw highlight.apply(path + "$", "<i>" + none_string + "</i>") %}</a>
+            <span class="secondary-note">({{ project_none_count }})</span>
+          </li>
         {% end %}
       </ul>
     <li>

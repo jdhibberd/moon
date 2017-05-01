@@ -5,11 +5,6 @@ from config import config
 from pymongo import MongoClient
 
 
-def get_distinct_tag_values(tag):
-    query = {"archived": {"$exists": False}}
-    return sorted(_get_collection().distinct(tag, query))
-
-
 def read_all_notes(query_archive):
     notes = []
     if query_archive:
