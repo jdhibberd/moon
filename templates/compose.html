@@ -35,24 +35,37 @@
 
     <input type="hidden" name="tags" value="{{ tags_string }}">
     <input type="hidden" name="referer" value="{{ referer }}">
-    <div>
-      <a href="javascript: submit()">Save</a>&nbsp;-
-      {% if note %}
-        {% if "archived" in note %}
-          <a
-            id="unarchive-button"
-            data-note-id="{{ note["note_id"] }}"
-            data-referer="{{ referer }}">
-          </a>&nbsp;-
-        {% else %}
-          <a
-            id="archive-button"
-            data-note-id="{{ note["note_id"] }}"
-            data-referer="{{ referer }}">
-          </a>&nbsp;-
+
+    <div class="form-buttons">
+      <div class="primary">
+        <input id="save-button" type="button" value="Save">
+        {% if note %}
+          {% if "archived" in note %}
+            <input
+              id="unarchive-button"
+              data-note-id="{{ note["note_id"] }}"
+              data-referer="{{ referer }}"
+              type="button"
+            />
+          {% else %}
+            <input
+              id="archive-button"
+              data-note-id="{{ note["note_id"] }}"
+              data-referer="{{ referer }}"
+              type="button"
+            />
+          {% end %}
         {% end %}
-      {% end %}
-      <a href="{{ referer }}">Cancel</a>
+      </div>
+      <div class="secondary">
+        <input
+          id="cancel-button"
+          type="button"
+          data-referer="{{ referer }}"
+          value="Cancel"
+        />
+      </div>
     </div>
+
   </form>
 {% end %}

@@ -1,6 +1,11 @@
 
 $(document).ready(function() {
 
+  $("#save-button")
+    .click(function() {
+      document.form.submit();
+    });
+
   $("#archive-button")
     .click(function() {
       var noteId = $(this).data("note-id");
@@ -9,8 +14,7 @@ $(document).ready(function() {
         window.location.href = referer;
       });
     })
-    .attr("href", "#")
-    .html("Archive");
+    .attr("value", "Archive");
 
   $("#unarchive-button")
     .click(function() {
@@ -20,11 +24,12 @@ $(document).ready(function() {
         window.location.href = referer;
       });
     })
-    .attr("href", "#")
-    .html("Unarchive");
+    .attr("value", "Unarchive");
+
+    $("#cancel-button")
+      .click(function() {
+        var referer = $(this).data("referer");
+        window.location.href = referer;
+      });
 
 });
-
-function submit() {
-  document.form.submit();
-}

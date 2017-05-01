@@ -33,6 +33,30 @@ form input[type="text"].size-medium {
   width: 250px;
 }
 
+form input[type="button"] {
+  -webkit-appearance: none; /* http://bit.ly/2pw2gl3 */
+  -moz-appearance: none;
+  appearance: none;
+  font-family: Helvetica Neue;
+  font-size: 14px;
+  padding: 4px 10px;
+  background: #eee;
+}
+
+div.form-buttons {
+  width: 580px;
+  -moz-column-count: 2;
+  -moz-column-gap: 50%;
+  -webkit-column-count: 2;
+  -webkit-column-gap: 50%;
+  column-count: 2;
+  column-gap: 50%;
+}
+
+div.form-buttons div.secondary {
+  text-align: right;
+}
+
 form div.field-value {
   margin-bottom: 10px;
 }
